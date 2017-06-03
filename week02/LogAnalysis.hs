@@ -30,3 +30,16 @@ build :: [LogMessage] -> MessageTree
 build = foldl (flip insert) Leaf
 
 inOrder :: MessageTree -> [LogMessage]
+inOrder Leaf = []
+inOrder (Node left lm right) = inOrder left ++ [lm] ++ inOrder right
+
+whatWentWrong :: [LogMessage] -> [String]
+whatWentWrong = map toMessage . inOrder . build . filter severeErrors
+  where
+    severeErrors (LogMessage (Error severity) _ _)
+      | severity >= 50 = True
+      | otherwise = False
+    severeErrors _ = False
+
+    toMessage (LogMessage _ _ message) = message
+    toMessage (Unknown message) = message
