@@ -40,21 +40,32 @@ localMaxima l =
 
 histogram :: [Integer] -> String
 histogram l =
-    concat $ reverse (map f [0..m - 1]) ++ ["==========\n0123456789\n"]
-  where
-    -- read from the bottom
+    {- [0..m - 1] gives us the 0-based indexes from 0 to m - 1 where m, as
+       defined below, is the height of the histogram.
 
-    f i = map (!! i) v ++ "\n"
-    -- ^ construct a String from the i-th character in each of the Strings in v. Also
-    --   append a linebreak.
-    v = map (\a -> take m $ replicate a '*' ++ repeat ' ') x
-    -- ^ convert each item in x into astericks strings with enough spaces padded on the
-    --   right to reach size m
-    m = maximum x
-    -- ^ the highest frequency out of all the digits
-    x = map (flip (-) 1 . length) . group . sort $ [0..9] ++ l
-    {- ^ create a 10-item list of frequencies of the digits from 0 to 9. First append
-         the list [0..9] to the input to guarantee that each digit is represented.
-         Then `sort` the list and `group` the items. Convert each resulting sublist to
-         its length - 1 (length - 1 because we tacked on an extra [0..9] at the beginning)
+       `map f [0..m - 1]` creates the thing described in f, below. We're mapping
+       over the list of *indices*. Note that `v`, which is the giant astericks list
+       we have, is used inside of `f`.
     -}
+    concat $ reverse (map f [0..m - 1]) ++ ["==========\n0123456789\n"]
+
+  where
+    {- Create a 10-item list of frequencies of the digits from 0 to 9. First append
+       the list [0..9] to the input to guarantee that each digit is represented.
+       Then `sort` the list and `group` the items. Convert each resulting sublist to
+       its length - 1 (length - 1 because we tacked on an extra [0..9] at the beginning)
+    -}
+    x = map ((+ (-1)) . length) . group . sort $ [0..9] ++ l
+
+    -- The highest frequency out of all the digits. This determines how high the
+    -- histogram will need to be and therefore how many lines we have.
+    m = maximum x
+
+    -- Convert each item in x into astericks strings with enough spaces padded on the
+    -- right to reach size m
+    v = map (\a -> take m $ replicate a '*' ++ repeat ' ') x
+
+    -- Construct a String from the i-th character in each of the Strings in v. Also
+    -- append a linebreak. This essentially flips v 90 degrees.
+    f i = map (!! i) v ++ "\n"
+
