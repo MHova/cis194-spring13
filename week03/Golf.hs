@@ -1,6 +1,7 @@
 module Golf where
 
 import Data.List (group, sort)
+import Safe (tailSafe)
 
 skips :: [a] -> [[a]]
 skips i =
@@ -27,17 +28,17 @@ skips i =
 
 localMaxima :: [Integer] -> [Integer]
 localMaxima l =
-    -- 1) `(tail $ tail l)` is l with the first two elements dropped
+    -- 1) `(tailSafe $ tailSafe l)` is l with the first two elements dropped
 
-    -- 2) `tail l` is l with the first element dropped
+    -- 2) `tailSafe l` is l with the first element dropped
 
-    -- 3) `zip l (tail l)` produces a list of the form [(a, b)] where each element
+    -- 3) `zip l (tailSafe l)` produces a list of the form [(a, b)] where each element
     -- a is paired with the element b that comes after it in l. The size of
-    -- `tail l` is 1 smaller than the size of `l`, so the last element of `l` is
+    -- `tailSafe l` is 1 smaller than the size of `l`, so the last element of `l` is
     -- dropped altogether from the zip operation.
 
-    -- 4) `zip (zip l (tail l)) (tail $ tail l)` takes the output from the last
-    -- comment and zips it again with (tail $ tail l), producing a list of the
+    -- 4) `zip (zip l (tailSafe l)) (tailSafe $ tailSafe l)` takes the output from the last
+    -- comment and zips it again with (tailSafe $ tailSafe l), producing a list of the
     -- form [((a, b), c)] where a, b, and c are 3 consecutive elements from the
     -- original list l. The size of this final list will be (length l - 2).
 
@@ -46,7 +47,7 @@ localMaxima l =
 
     -- 6) map (snd . fst) on this filtered list to pull out all the b's out of
     -- the [((a, b), c)]
-    map (snd . fst) . filter f $ zip (zip l (tail l)) (tail $ tail l)
+    map (snd . fst) . filter f $ zip (zip l (tailSafe l)) (tailSafe $ tailSafe l)
   where
     -- Given a nested Integer triple in the form of ((a, b), c), return
     -- whether b is greater than both a and c. If so, then this triple contains
