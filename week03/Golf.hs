@@ -31,10 +31,10 @@ localMaxima l =
     -- the [((a, b), c)]
     map (snd . fst) . filter f $ zip (zip l (tail l)) (tail $ tail l)
   where
-    f :: ((Integer, Integer), Integer) -> Bool
     -- Given a nested Integer triple in the form of ((a, b), c), return
     -- whether b is greater than both a and c. If so, then this triple contains
     -- a local maxima!
+    f :: ((Integer, Integer), Integer) -> Bool
     f ((a, b), c) = b > a && b > c
 
 
@@ -55,17 +55,21 @@ histogram l =
        Then `sort` the list and `group` the items. Convert each resulting sublist to
        its length - 1 (length - 1 because we tacked on an extra [0..9] at the beginning)
     -}
+    x :: [Int]
     x = map ((+ (-1)) . length) . group . sort $ [0..9] ++ l
 
     -- The highest frequency out of all the digits. This determines how high the
     -- histogram will need to be and therefore how many lines we have.
+    m :: Int
     m = maximum x
 
     -- Convert each item in x into astericks strings with enough spaces padded on the
     -- right to reach size m
+    v :: [String]
     v = map (\a -> take m $ replicate a '*' ++ repeat ' ') x
 
     -- Construct a String from the i-th character in each of the Strings in v. Also
     -- append a linebreak. This essentially flips v 90 degrees.
+    f :: Int -> String
     f i = map (!! i) v ++ "\n"
 
