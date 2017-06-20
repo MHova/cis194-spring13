@@ -61,8 +61,8 @@ histogram l =
        defined below, is the height of the histogram.
 
        `map f [0..m - 1]` creates the thing described in f, below. We're mapping
-       over the list of *indices*. Note that `v`, which is the giant astericks list
-       we have, is used inside of `f`.
+       over the list of *indices*. Note that `v`, which is the giant astericks
+       list, is used inside of `f`.
     -}
     concat $ reverse (map f [0..m - 1]) ++ ["==========\n0123456789\n"]
 
