@@ -4,9 +4,26 @@ import Data.List (group, sort)
 
 skips :: [a] -> [[a]]
 skips i =
+    {- `zip i [1..]` pairs each element in i with its 1-based index
+
+       `[1..length i]` is a list from 1 to length i
+
+       We apply `f $ zip i [1..]` (described below) to each element in [1..length i]
+    -}
     map (f $ zip i [1..]) [1..length i]
   where
-    f l m = map fst $ filter ((0 ==) . flip mod m . snd) l
+    {- Reminder: the incoming `l` is a list where each of the elements in the main
+       input is paired with its 1-based index.
+
+       `m` is an int element from the [1..length i] list that we're mapping over
+
+       `filter ((0 ==) . (`mod` m) . snd) l` gives us only the elements in `l`
+       where the index is mod-able by `m`
+
+       `map fst` grabs the actual element, discarding the index we paired it with
+    -}
+    f :: [(a, Int)] -> Int -> [a]
+    f l m = map fst $ filter ((0 ==) . (`mod` m) . snd) l
 
 localMaxima :: [Integer] -> [Integer]
 localMaxima l =
