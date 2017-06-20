@@ -6,7 +6,9 @@ fun1 (x:xs)
   | even x = (x - 2) * fun1 xs
   | otherwise = fun1 xs
 
-
+-- Wow, `product [] == 1`. That's convenient!
+fun1' :: [Integer] -> Integer
+fun1' = product . map (+ (-2)) . filter even
 
 fun2 :: Integer -> Integer
 fun2 1 = 0
