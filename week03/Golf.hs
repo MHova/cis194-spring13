@@ -45,15 +45,18 @@ localMaxima l =
     -- 5) Apply the `f` filter (annotated below) to this final list to find the
     -- nested triples that contain a local maxima.
 
-    -- 6) map (snd . fst) on this filtered list to pull out all the b's out of
-    -- the [((a, b), c)]
-    map (snd . fst) . filter f $ zip (zip l (tailSafe l)) (tailSafe $ tailSafe l)
+    -- 6) map snd3 on this filtered list to pull out all the b's out of
+    -- the [(a, b, c)]
+    map snd3 . filter f $ zip3 l (tailSafe l) (tailSafe $ tailSafe l)
   where
     -- Given a nested Integer triple in the form of ((a, b), c), return
     -- whether b is greater than both a and c. If so, then this triple contains
     -- a local maxima!
-    f :: ((Integer, Integer), Integer) -> Bool
-    f ((a, b), c) = b > a && b > c
+    f :: (Integer, Integer, Integer) -> Bool
+    f (a, b, c) = b > a && b > c
+
+    snd3 :: (a, b, c) -> b
+    snd3 (_, b, _) = b
 
 
 histogram :: [Integer] -> String
