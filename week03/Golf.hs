@@ -28,24 +28,18 @@ skips i =
 
 localMaxima :: [Integer] -> [Integer]
 localMaxima l =
-    -- 1) `(tailSafe $ tailSafe l)` is l with the first two elements dropped
+    -- 1) `drop 2 l` is l with the first two elements dropped
 
-    -- 2) `tailSafe l` is l with the first element dropped
+    -- 2) `drop 1 l` is l with the first element dropped
 
-    -- 3) `zip l (tailSafe l)` produces a list of the form [(a, b)] where each element
-    -- a is paired with the element b that comes after it in l. The size of
-    -- `tailSafe l` is 1 smaller than the size of `l`, so the last element of `l` is
-    -- dropped altogether from the zip operation.
+    -- 3) `zip3 l (drop 1 l) (drop 2 l)` creates a list of the form [(a, b, c)]
+    -- where each tuple are three consecutive elements from the original `l` list.
+    -- The size of this final list will be (length l - 2).
 
-    -- 4) `zip (zip l (tailSafe l)) (tailSafe $ tailSafe l)` takes the output from the last
-    -- comment and zips it again with (tailSafe $ tailSafe l), producing a list of the
-    -- form [((a, b), c)] where a, b, and c are 3 consecutive elements from the
-    -- original list l. The size of this final list will be (length l - 2).
+    -- 4) Apply the `f` filter (annotated below) to this final list to find the
+    -- triples that contain a local maxima.
 
-    -- 5) Apply the `f` filter (annotated below) to this final list to find the
-    -- nested triples that contain a local maxima.
-
-    -- 6) map snd3 on this filtered list to pull out all the b's out of
+    -- 5) map snd3 on this filtered list to pull out all the b's out of
     -- the [(a, b, c)]
     map snd3 . filter f $ zip3 l (drop 1 l) (drop 2 l)
   where
