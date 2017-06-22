@@ -1,5 +1,7 @@
 module Homework where
 
+import Data.Bool (bool)
+
 fun1 :: [Integer] -> Integer
 fun1 [] = 1
 fun1 (x:xs)
@@ -20,6 +22,4 @@ fun2 n
 fun2' :: Integer -> Integer
 fun2' = sum . filter even . takeWhile (/= 1) . iterate f
   where
-    f n | even n = n `div` 2
-        | otherwise = 3 * n + 1
-
+    f n = bool (3 * n + 1) (n `div` 2) (even n)
