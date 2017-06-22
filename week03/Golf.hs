@@ -47,9 +47,9 @@ localMaxima l =
 
     -- 6) map snd3 on this filtered list to pull out all the b's out of
     -- the [(a, b, c)]
-    map snd3 . filter f $ zip3 l (tailSafe l) (tailSafe $ tailSafe l)
+    map snd3 . filter f $ zip3 l (drop 1 l) (drop 2 l)
   where
-    -- Given a nested Integer triple in the form of ((a, b), c), return
+    -- Given an Integer triple in the form of (a, b, c), return
     -- whether b is greater than both a and c. If so, then this triple contains
     -- a local maxima!
     f :: (Integer, Integer, Integer) -> Bool
