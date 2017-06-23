@@ -45,3 +45,9 @@ insertNode newElement (Node currHeight left currElement right)
 height :: Tree a -> Integer
 height Leaf = -1
 height (Node h _ _ _) = h
+
+-- returns True if and only if there are an odd number of True
+-- values contained in the input list. It does not matter how many
+-- False values the input list contains
+xor :: [Bool] -> Bool
+xor = odd . foldl (\count -> bool count (count + 1)) 0
