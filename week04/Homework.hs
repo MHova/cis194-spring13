@@ -51,3 +51,16 @@ height (Node h _ _ _) = h
 -- False values the input list contains
 xor :: [Bool] -> Bool
 xor = odd . foldl (\count -> bool count (count + 1)) 0
+
+map' :: (a -> b) -> [a] -> [b]
+map' f = foldr (\elem acc -> f elem : acc) []
+
+{-
+  Given an integer n, your function should
+  generate all the odd prime numbers up to 2n + 2
+-}
+sieveSundaram :: Integer -> [Integer]
+sieveSundaram = undefined
+
+cartProd :: [a] -> [b] -> [(a, b)]
+cartProd xs ys = [(x,y) | x <- xs, y <- ys]
