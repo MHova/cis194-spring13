@@ -1,6 +1,7 @@
 module Homework where
 
 import Data.Bool (bool)
+import Data.List ((\\))
 
 fun1 :: [Integer] -> Integer
 fun1 [] = 1
@@ -60,7 +61,10 @@ map' f = foldr (\elem acc -> f elem : acc) []
   generate all the odd prime numbers up to 2n + 2
 -}
 sieveSundaram :: Integer -> [Integer]
-sieveSundaram = undefined
+sieveSundaram n = map (\a -> 2*a + 1) $ oneToN \\ eliminated
+  where
+    oneToN = [1..n]
+    eliminated = map (\(i, j) -> 2*i*j + i + j) $ cartProd oneToN oneToN
 
 cartProd :: [a] -> [b] -> [(a, b)]
 cartProd xs ys = [(x,y) | x <- xs, y <- ys]
