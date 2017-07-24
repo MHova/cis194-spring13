@@ -2,9 +2,11 @@
 
 module Calc where
 
+import Control.Applicative (liftA2)
 import ExprT (ExprT(Lit, Add, Mul))
 import Parser (parseExp)
 import qualified StackVM as SV
+import qualified Data.Map as M
 
 eval :: ExprT -> Integer
 eval (Lit i) = i
@@ -26,6 +28,8 @@ instance Expr ExprT where
 
 reify :: ExprT -> ExprT
 reify = id
+
+-- Exercise 4
 
 testExp :: Expr a => Maybe a
 testExp = parseExp lit add mul "(3 * -4) + 5"
@@ -76,6 +80,8 @@ instance Expr Mod7 where
   add (Mod7 a) (Mod7 b) = lit $ add a b
   mul (Mod7 a) (Mod7 b) = lit $ mul a b
 
+-- Exercise 5 (which made very little sense to me)
+
 instance Expr SV.Program where
   lit a = [SV.PushI a]
   add a b = a ++ b ++ [SV.Add]
@@ -83,3 +89,69 @@ instance Expr SV.Program where
 
 compile :: String -> Maybe SV.Program
 compile = parseExp lit add mul
+
+-- Exercise 6
+
+class HasVars a where
+  var :: String -> a
+
+data VarExprT =
+    VLit Integer
+  | VAdd VarExprT VarExprT
+  | VMul VarExprT VarExprT
+  | Var String
+  deriving (Show, Eq)
+
+instance HasVars VarExprT where
+  var = Var
+
+instance Expr VarExprT where
+  lit = VLit
+  add = VAdd
+  mul = VMul
+
+instance HasVars (M.Map String Integer -> Maybe Integer) where
+  var = M.lookup
+
+instance Expr (M.Map String Integer -> Maybe Integer) where
+  lit i = \_theMap -> Just i
+  -- can be reduced to: lit = const . Just
+  add lookupFunc1 lookupFunc2 =
+    \theMap ->
+      case lookupFunc1 theMap of
+        Nothing -> Nothing
+        Just valA ->
+          case lookupFunc2 theMap of
+            Nothing -> Nothing
+            Just valB -> Just (valA `add` valB)
+  mul lookupFunc1 lookupFunc2 =
+    \theMap ->
+      case lookupFunc1 theMap of
+        Nothing -> Nothing
+        Just valA ->
+          case lookupFunc2 theMap of
+            Nothing -> Nothing
+            Just valB -> Just (valA `mul` valB)
+
+{- |
+  add' and mul' are alternate versions of add and mul using tools that the
+  student would not be expected to know at this point in the course.
+-}
+
+add' ::
+     (M.Map String Integer -> Maybe Integer)
+  -> (M.Map String Integer -> Maybe Integer)
+  -> (M.Map String Integer -> Maybe Integer)
+add' a b theMap = liftA2 add (a theMap) (b theMap)
+
+mul' ::
+     (M.Map String Integer -> Maybe Integer)
+  -> (M.Map String Integer -> Maybe Integer)
+  -> (M.Map String Integer -> Maybe Integer)
+mul' a b theMap = liftA2 mul (a theMap) (b theMap)
+
+withVars ::
+     [(String, Integer)]
+  -> (M.Map String Integer -> Maybe Integer)
+  -> Maybe Integer
+withVars vs exp = exp $ M.fromList vs
