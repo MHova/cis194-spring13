@@ -1,7 +1,10 @@
+{-# LANGUAGE FlexibleInstances #-}
+
 module Calc where
 
 import ExprT (ExprT(Lit, Add, Mul))
 import Parser (parseExp)
+import qualified StackVM as SV
 
 eval :: ExprT -> Integer
 eval (Lit i) = i
@@ -72,3 +75,11 @@ instance Expr Mod7 where
   -- lit a = Mod7 (a `mod` 7)
   add (Mod7 a) (Mod7 b) = lit $ add a b
   mul (Mod7 a) (Mod7 b) = lit $ mul a b
+
+instance Expr SV.Program where
+  lit a = [SV.PushI a]
+  add a b = a ++ b ++ [SV.Add]
+  mul a b = a ++ b ++ [SV.Mul]
+
+compile :: String -> Maybe SV.Program
+compile = parseExp lit add mul
