@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -fno-warn-missing-methods #-}
+
 module Fibonacci where
 
 -- Exercise 1
@@ -48,3 +50,25 @@ ruler = foldr (interleaveStreams) undefined (map streamRepeat [0..])
 
 interleaveStreams :: Stream a -> Stream a -> Stream a
 interleaveStreams (Cons a restA) b = Cons a (interleaveStreams b restA)
+
+-- I have no idea what Exercise 6 means
+
+-- Exercise 7
+{- Matrix ((a,b), (c,d)) ==
+[a, b]
+[c, d]
+-}
+newtype Matrix = Matrix ((Integer, Integer), (Integer, Integer))
+
+instance Num Matrix where
+    Matrix ((a1,b1), (c1,d1)) * Matrix ((a2,b2), (c2,d2)) =
+      Matrix (
+              (a1*a2 + b1*c2, a1*b2 + b1*d2),
+              (c1*a2 + d1*c2, c1*b2 + d1*d2)
+             )
+
+fib4 :: Integer -> Integer
+fib4 0 = 0
+fib4 n =
+  let Matrix ((answer, _), _) = Matrix ((1,1), (1,0)) ^ n
+  in answer
