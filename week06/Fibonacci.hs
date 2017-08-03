@@ -43,10 +43,10 @@ streamFromSeed seed a = Cons a (streamFromSeed seed (seed a))
 
 -- there's gotta be a better way to do this
 nats :: Stream Integer
-nats = foldr (\n acc -> Cons n acc) undefined [0..]
+nats = foldr Cons undefined [0..]
 
 ruler :: Stream Integer
-ruler = foldr (interleaveStreams) undefined (map streamRepeat [0..])
+ruler = foldr (interleaveStreams . streamRepeat) undefined [0..]
 
 interleaveStreams :: Stream a -> Stream a -> Stream a
 interleaveStreams (Cons a restA) b = Cons a (interleaveStreams b restA)
