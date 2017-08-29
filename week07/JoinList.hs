@@ -1,8 +1,11 @@
+{-# LANGUAGE FlexibleInstances #-}
+
 module JoinList where
 
 import Data.Monoid ((<>))
 
-import Scrabble (Score, scoreString)
+import Buffer (Buffer(..))
+import Scrabble (Score(Score), scoreString)
 import Sized (Sized, Size(Size), getSize, size)
 
 data JoinList m a = Empty
@@ -89,8 +92,36 @@ size' = getSize . size . tag
 scoreLine :: String -> JoinList Score String
 scoreLine s = Single (scoreString s) s
 
+-- Exercise 4
+
+instance Buffer (JoinList (Score, Size) String) where
+  toString Empty = ""
+  toString (Single _ s) = s
+  toString (Append _ a b) = toString a ++ toString b
+
+  fromString str = foldr (+++) Empty $ map toSingle (lines str)
+    where
+      toSingle s = Single (scoreString s, Size 1) s
+
+  line = indexJ
+
+  -- | @replaceLine n ln buf@ returns a modified version of @buf@,
+  --   with the @n@th line replaced by @ln@.  If the index is
+  --   out-of-bounds, the buffer should be returned unmodified.
+  --replaceLine :: Int -> String -> b -> b
+  replaceLine = undefined
+
+  numLines = unSize . snd . tag
+
+  value = unScore . fst . tag
 
 -- Testing functions
+
+unScore :: Score -> Int
+unScore (Score score) = score
+
+unSize :: Size -> Int
+unSize (Size size) = size
 
 -- produces an unbalanced JoinList. Eh that's good enough.
 listToSizeJL :: [a] -> JoinList Size a
