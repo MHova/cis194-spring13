@@ -3,8 +3,10 @@
 
 module Party where
 
+import Data.List (sort)
 import Data.Tree (Tree(Node))
-import Employee (GuestList(GL), Employee(Emp, empFun))
+import Employee (GuestList(GL), Employee(Emp, empFun, empName))
+import System.IO (IOMode(ReadMode), Handle, withFile, hGetContents)
 
 {- Exercise 1 -}
 
@@ -63,3 +65,15 @@ nextLevel boss gls = (withThisBoss, withoutThisBoss)
 {- Exercise 4 -}
 maxFun :: Tree Employee -> GuestList
 maxFun = uncurry moreFun . treeFold nextLevel
+
+{- Exercise 5 -}
+main :: IO ()
+main = withFile "company.txt" ReadMode printGuestList
+
+printGuestList :: Handle -> IO ()
+printGuestList handle =
+  putStrLn . formatGuestList . maxFun . read =<< hGetContents handle
+
+formatGuestList :: GuestList -> String
+formatGuestList (GL emps fun) =
+  unlines $ ("Total fun: " ++ show fun) : sort (map empName emps)
