@@ -62,4 +62,4 @@ nextLevel boss gls = (withThisBoss, withoutThisBoss)
 
 {- Exercise 4 -}
 maxFun :: Tree Employee -> GuestList
-maxFun tree = undefined
+maxFun = uncurry moreFun . treeFold nextLevel
