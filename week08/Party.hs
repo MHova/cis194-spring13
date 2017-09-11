@@ -3,7 +3,7 @@
 
 module Party where
 
-import Data.Tree (Tree, flatten)
+import Data.Tree (Tree(Node))
 import Employee (GuestList(GL), Employee(Emp, empFun))
 
 {- Exercise 1 -}
@@ -32,8 +32,8 @@ moreFun :: GuestList -> GuestList -> GuestList
 moreFun = max
 
 {- Exercise 2 -}
-treeFold :: (a -> b -> b) -> b -> Tree a -> b
-treeFold f acc = foldr f acc . flatten
+treeFold :: (a -> [b] -> b) -> Tree a -> b
+treeFold f (Node label children) = f label $ map (treeFold f) children
 
 {- Exercise 3 -}
 
@@ -59,3 +59,7 @@ nextLevel boss gls = (withThisBoss, withoutThisBoss)
     subTreesWithThisBoss :: [GuestList]
     subTreesWithThisBoss = map (glCons boss . snd) gls
     -}
+
+{- Exercise 4 -}
+maxFun :: Tree Employee -> GuestList
+maxFun tree = undefined
