@@ -44,7 +44,7 @@ nextLevel boss gls = (withThisBoss, withoutThisBoss)
     withoutThisBoss = foldMap (uncurry moreFun) gls
 
     withThisBoss :: GuestList
-    withThisBoss = glCons boss withoutThisBoss
+    withThisBoss = glCons boss $ foldMap snd gls
 
     {-
     withThisBoss :: GuestList
