@@ -41,7 +41,7 @@ nextLevel :: Employee -> [(GuestList, GuestList)] -> (GuestList, GuestList)
 nextLevel boss gls = (withThisBoss, withoutThisBoss)
   where
     withoutThisBoss :: GuestList
-    withoutThisBoss = mconcat $ map (uncurry moreFun) gls
+    withoutThisBoss = foldMap (uncurry moreFun) gls
 
     withThisBoss :: GuestList
     withThisBoss = glCons boss withoutThisBoss
