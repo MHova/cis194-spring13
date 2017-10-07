@@ -6,6 +6,8 @@ module AParser where
 
 import           Control.Applicative
 
+import           Control.Monad (void)
+
 import           Data.Char
 
 -- A parser for a value of type a is a function which takes a String
@@ -102,3 +104,7 @@ intPair' =
 instance Alternative Parser where
   empty = Parser $ const Nothing
   Parser p1 <|> Parser p2 = Parser (\s -> p1 s <|> p2 s)
+
+intOrUppercase :: Parser ()
+-- hlint told me to use `void` instead of `const () <$>`
+intOrUppercase = void posInt <|> void (satisfy isUpper)
