@@ -98,3 +98,7 @@ intPair' =
   where
     wat :: [a] -> [a] -> [a] -> [a]
     wat a b c = a ++ b ++ c
+
+instance Alternative Parser where
+  empty = Parser $ const Nothing
+  Parser p1 <|> Parser p2 = Parser (\s -> p1 s <|> p2 s)
