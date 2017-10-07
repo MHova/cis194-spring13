@@ -71,3 +71,30 @@ instance Applicative Parser where
     where
       lol (Just (f, remaining)) = first f <$> p2 remaining
       lol Nothing = Nothing
+
+abParser :: Parser (Char, Char)
+abParser = (,) <$> char 'a' <*> char 'b'
+
+abParser_ :: Parser ()
+abParser_ = const . const () <$> char 'a' <*> char 'b'
+
+intPair :: Parser [Integer]
+intPair =
+        wat
+    <$> posInt
+    <*> char ' '
+    <*> posInt
+  where
+    wat :: a -> b -> a -> [a]
+    wat a _ c = [a, c]
+
+-- original horrific version
+intPair' :: Parser [Integer]
+intPair' =
+        wat
+    <$> (replicate 1 <$> posInt)
+    <*> (const [] <$> char ' ')
+    <*> (replicate 1 <$> posInt)
+  where
+    wat :: [a] -> [a] -> [a] -> [a]
+    wat a b c = a ++ b ++ c
