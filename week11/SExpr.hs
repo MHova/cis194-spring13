@@ -25,11 +25,13 @@ oneOrMore p = (:) <$> p <*> zeroOrMore p
 
 spaces :: Parser String
 spaces = (:) <$> satisfy isSpace <*> spaces <|> pure ""
+--spaces = zeroOrMore $ satisfy isSpace
 
 ident :: Parser String
 ident = (:) <$> satisfy isAlpha <*> lol
   where
     lol = (:) <$> satisfy isAlphaNum <*> lol <|> pure ""
+--ident = (:) <$> satisfy isAlpha <*> zeroOrMore (satisfy isAlphaNum)
 
 ------------------------------------------------------------
 --  3. Parsing S-expressions
@@ -48,3 +50,16 @@ data Atom = N Integer | I Ident
 data SExpr = A Atom
            | Comb [SExpr]
   deriving Show
+
+parseAtom :: Parser Atom
+parseAtom = (I <$> ident) <|> (N <$> posInt)
+
+withSpaces :: Parser a -> Parser a
+withSpaces p = spaces *> p <* spaces
+
+withParens :: Parser a -> Parser a
+withParens p = char '(' *> p <* char ')'
+
+parseSExpr :: Parser SExpr
+parseSExpr = withSpaces $
+  (A <$> parseAtom) <|> withParens (Comb <$> oneOrMore parseSExpr)
