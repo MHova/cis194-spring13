@@ -94,9 +94,9 @@ intPair =
 intPair' :: Parser [Integer]
 intPair' =
         wat
-    <$> (replicate 1 <$> posInt)
+    <$> (pure <$> posInt)
     <*> (const [] <$> char ' ')
-    <*> (replicate 1 <$> posInt)
+    <*> (pure <$> posInt)
   where
     wat :: [a] -> [a] -> [a] -> [a]
     wat a b c = a ++ b ++ c
