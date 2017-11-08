@@ -78,3 +78,29 @@ battle' Battlefield{attackers, defenders} = do
 
     didAttackerRollHigher :: (DieValue, DieValue) -> Bool
     didAttackerRollHigher (aRoll, dRoll) = aRoll > dRoll
+
+invade :: Battlefield -> Rand StdGen Battlefield
+invade battlefield =
+  battle battlefield >>= \resultB@(Battlefield attackersLeft defendersLeft) ->
+  if attackersLeft >= 2 || defendersLeft >= 1
+    then invade resultB
+    else return resultB
+
+invade' :: Battlefield -> Rand StdGen Battlefield
+invade' battlefield = do
+  resultB@(Battlefield attackersLeft defendersLeft) <- battle battlefield
+  if attackersLeft >= 2 || defendersLeft >= 1
+    then invade resultB
+    else return resultB
+
+successProb :: Battlefield -> Rand StdGen Double
+successProb battlefield =
+  sequence (replicate 1000 $ invade battlefield) >>= \results ->
+  let successfulInvasions = length $ filter ((== 0) . defenders) results
+  in return $ (fromIntegral successfulInvasions) / 1000
+
+successProb' :: Battlefield -> Rand StdGen Double
+successProb' battlefield = do
+  results <- sequence $ replicate 1000 (invade battlefield)
+  let successfulInvasions = length $ filter ((== 0) . defenders) results
+  return $ (fromIntegral successfulInvasions) / 1000
